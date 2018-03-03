@@ -22,6 +22,7 @@
     - [Custom Properties](#custom-properties)
     - [Slots](#slots)
     - [Scoped Styles](#scoped-styles)
+    - [Extract Styles](#extract-styles)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -422,3 +423,30 @@ footer[data-v-8f18fd88] {
 ```
 
 And the corresponding data attribute is added to the card elements rendered by the Post component, so these styles only get applied to Post component.
+
+### Extract Styles
+
+So far, style tag has been used twice, in Layout component to define global rules, and in Post component to define scoped styles.
+Having the style tag in the .vue file means as output of build, the styles are actually stored in the js bundle file. This is not good practice. Would like to have styles in a separate file, such as `styles.css`, which can be cached, cdn, etc.
+
+Use extract styles module:
+
+```bash
+npm install extract-text-webpack-plugin@3.0.0 --save-dev
+```
+
+Add this plugin in [webpack.client.config.js](build/webpack.client.config.js).
+
+To use it, need `extractCSS: true` in the css loader of webpack but don't want to add this to base config because later will have server side rendering and not want this. So add it to client config, modifying the rules:
+
+```javascript
+config.module.rules
+  .filter(x => {return x.loader === 'vue-loader'})
+  .forEach(x => x.options.extractCSS = true)
+```
+
+Finally, modify [index.html](index.html) to include the extracted css file:
+
+```html
+<link rel="stylesheet" href="/assets/styles.css">
+```

@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Single Page Applications with Vue.js](#single-page-applications-with-vuejs)
+  - [Environment Setup - Build Process](#environment-setup---build-process)
+    - [Project Files](#project-files)
+    - [Package Management](#package-management)
+    - [Web Server](#web-server)
+    - [Web Server - Index.html](#web-server---indexhtml)
+    - [Webpack - Setup](#webpack---setup)
+    - [Dev Middleware](#dev-middleware)
+    - [Hot Reloading](#hot-reloading)
+    - [Linting](#linting)
+  - [Single File Components](#single-file-components)
+    - [Vue Component](#vue-component)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Single Page Applications with Vue.js
 
 > Notes from Pluralsight [course](https://app.pluralsight.com/library/courses/vue-js-single-page-applications/table-of-contents)
@@ -126,3 +145,27 @@ npm install eslint@4.5.0 eslint-loader@1.9.0 eslint-plugin-html@3.2.0 eslint-con
 Modify [build/webpack.base.config.js](build/webpack.base.config.js) to hook up linting into build process.
 
 Now when server is restarted, build will fail on lint errors.
+
+## Single File Components
+
+Vue uses single file components, each file contains a template for html, a script for js and style for css.
+
+### Vue Component
+
+One way to do things is to declare a component using `Vue.component` method.
+
+On first load, client entry will mount view instance to the div with id of `app` and create an `<app></app>` element.
+`<app></app>` element is configured in app.js with a template:
+
+```javascript
+Vue.component('app', {
+  template: `
+    <div id="app">
+    ...
+
+const app = new Vue({
+  render: h => h('app')
+})
+```
+
+Therefore `<app></app>` element will be replaced with app template configuration.

@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import AppLayout from './theme/Layout.vue'
+import router from './router'
 
 console.log(AppLayout)
 
-// `render` property is a Vue.js function that returns an element
-// include AppLayout as the rendered result
+// extemd Vue instance with router plugin instance
 const app = new Vue({
-  render: h => h(AppLayout)
+  router,
+  ...AppLayout
 })
 
-export { app }
+// export router as well because it may be needed by client entry later
+export { app, router }

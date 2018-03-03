@@ -23,6 +23,8 @@
     - [Slots](#slots)
     - [Scoped Styles](#scoped-styles)
     - [Extract Styles](#extract-styles)
+  - [Routing](#routing)
+    - [Loading Routes](#loading-routes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -450,3 +452,31 @@ Finally, modify [index.html](index.html) to include the extracted css file:
 ```html
 <link rel="stylesheet" href="/assets/styles.css">
 ```
+
+## Routing
+
+### Loading Routes
+
+Use [vue-router](https://router.vuejs.org/en/), the official Vue.js plugin for routing. First install it:
+
+```shell
+npm install vue-router@2.7.0 --save
+```
+
+Vue plugins are scripts that can be used to extend functionality of Vue globally.
+
+[router.js](src/router.js)
+
+Recall in app.js, Layout component is mapped to the Vue app. This means every time a page is loaded, the Layout.vue component is loaded.
+
+Router is exported, then imported into app.js. To use it, extend the Vue instance with the Router instance.
+
+After router is configured to have default path point to Category component, this component can be removed from Layout component and replaced with `<router-view></router-view>` reserved element:
+
+```html
+<div class="container content">
+  <router-view></router-view>
+</div>
+```
+
+Every time page is loaded, router will determine current path, load component linked to path and add its template in the `<router-view>` section.

@@ -1,0 +1,19 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Category from './theme/Category.vue'
+
+// connect VueRouter plugin with Vue configuration
+Vue.use(VueRouter)
+
+// configure router with an object of options
+// `router` is a property of options object to specify an array
+// this array will link routes with components
+// any component referenced in routes must be imported above
+// recall in app.js, Layout component is mapped to the Vue app
+const router = new VueRouter({
+  routes: [
+    {path: '/', component: Category}
+  ]
+})
+
+export default router

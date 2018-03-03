@@ -15,6 +15,7 @@
   - [Single File Components](#single-file-components)
     - [Vue Component](#vue-component)
     - [.Vue Files](#vue-files)
+    - [ES6 Transpiling](#es6-transpiling)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -185,3 +186,39 @@ if (module.hot) {
 ```
 
 Loader uses vue template compiler, so can remove `resolve` section from webpack base config that was compiling templates on the fly.
+
+### ES6 Transpiling
+
+From `console.log(AppLayout)` can see that it has `render` property.
+
+Can use ES2015 spread syntax to replace this:
+
+```javascript
+const app = new Vue({
+  render: h => h(AppLayout)
+})
+```
+
+With this:
+
+```javascript
+const app = new Vue({
+  ...AppLayout
+})
+```
+
+Properties of AppLayout will `spread` to json properties that declare Vue instance.
+
+Use Babel in case not all browsers support all features of ES2015/16.
+
+Add babel loader test in rules section of webback base config.
+
+Install babel loader and deps:
+
+```shell
+npm install babel-core@6.26.0 babel-eslint@7.2.3 babel-loader@7.1.2 babel-preset-es2015@6.24.1 babel-preset-stage-2@6.24.1 --save-dev
+```
+
+Update [.eslintrc.js](.eslintrc.js) to include babel eslint parser.
+
+Finally configure babel with [.babelrc](.babelrc). This specifies for babel NOT to use modulesl because that's being handled by webpack.

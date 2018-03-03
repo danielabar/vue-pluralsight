@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import AppLayout from './theme/Layout.vue'
 
+console.log(AppLayout)
+
 // `render` property is a Vue.js function that returns an element
 // include AppLayout as the rendered result
 const app = new Vue({

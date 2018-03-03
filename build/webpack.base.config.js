@@ -17,6 +17,13 @@ const config = {
       {
         test: /\.vue$/,
         loader: 'vue-loader'
+      },
+      // babel
+      // NOTE: no check for .vue files because this rule runs AFTER vue-loader converts .vue files to .js
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
       }
     ]
   },

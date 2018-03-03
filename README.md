@@ -21,6 +21,7 @@
     - [Child Components](#child-components)
     - [Custom Properties](#custom-properties)
     - [Slots](#slots)
+    - [Scoped Styles](#scoped-styles)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -378,3 +379,46 @@ Then reference the content with the slot name in the parent component:
 Finally, change Post component so only link is a property.
 
 Benefit of using slots is component can be re-used but with different elements. For example, in another view cards could be used with an h2 tag instead of h3 for the title slot.
+
+### Scoped Styles
+
+For example, want to fix the card styling so they all have the same height.
+
+Add `<style>` tag with following css Post.vue to fix this:
+
+```css
+.card {
+  padding-bottom: 40px;
+  height: 100%;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+}
+```
+
+However, this breaks footer.
+
+When style tag is added in Vue component, Vue adds it to `<head>` of html page. This means styles are included *globally*.
+
+In the card example, `footer` style is intended to style only the `<footer>` element in the Post component. There is also a `<footer>` element in Layout component so the style unintentionally leaked out and affected the Layout component as well.
+
+To fix this, add `scoped` attribute to style element: `<style scoped>`. Still adds style to head of document, but now it looks something like this:
+
+```css
+.card[data-v-8f18fd88] {
+  padding-bottom: 40px;
+  height: 100%;
+}
+footer[data-v-8f18fd88] {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+}
+```
+
+And the corresponding data attribute is added to the card elements rendered by the Post component, so these styles only get applied to Post component.

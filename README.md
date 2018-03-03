@@ -16,6 +16,7 @@
     - [Vue Component](#vue-component)
     - [.Vue Files](#vue-files)
     - [ES6 Transpiling](#es6-transpiling)
+    - [Styles](#styles)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -222,3 +223,24 @@ npm install babel-core@6.26.0 babel-eslint@7.2.3 babel-loader@7.1.2 babel-preset
 Update [.eslintrc.js](.eslintrc.js) to include babel eslint parser.
 
 Finally configure babel with [.babelrc](.babelrc). This specifies for babel NOT to use modulesl because that's being handled by webpack.
+
+### Styles
+
+For this course, will use something smaller than Bootstrap, instead will use [Bulma](https://bulma.io/documentation/columns/basics/).
+
+```shell
+npm install bulma@0.5.1 --save
+```
+
+Then add `<style></style>` tag to [Layout.vue](src/theme/Layout.vue)
+
+This tag accepts a lang attribute to indicate what to use to pre-process css (scss or stylus).
+(same is true for script and template tags, for example could have `lang="coffee"` to use CoffeeScript).
+
+For this course, will use sass `<style lang="scss">...</style>`.
+
+Will need to add appropriate loader to webpack config to parse styles, and install deps:
+
+```shell
+npm install css-loader@0.28.5 sass-loader@6.0.6 node-sass@4.5.3 --save-dev
+```

@@ -13,10 +13,14 @@ const config = {
         loader: 'eslint-loader',     // using eslint-loader
         exclude: /node_modules/      // do not lint node_modules folder
       },
-      // vue
+      // vue + css + sass
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
+        loader: 'vue-loader',
+        options: {
+          css: 'css-loader',
+          'scss': 'css-loader|sass-loader'
+        }
       },
       // babel
       // NOTE: no check for .vue files because this rule runs AFTER vue-loader converts .vue files to .js

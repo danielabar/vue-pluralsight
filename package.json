@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "description": "> Notes from Pluralsight [course](https://app.pluralsight.com/library/courses/vue-js-single-page-applications/table-of-contents)",
   "scripts": {
+    "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "vue": "^2.4.2"
+    "express": "4.15.4",
+    "vue": "2.4.2"
+  },
+  "devDependencies": {
+    "webpack": "3.5.5",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-hot-middleware": "^2.18.2"
   }
 }

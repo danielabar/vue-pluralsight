@@ -17,6 +17,7 @@
     - [.Vue Files](#vue-files)
     - [ES6 Transpiling](#es6-transpiling)
     - [Styles](#styles)
+    - [Template Binding](#template-binding)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -243,4 +244,27 @@ Will need to add appropriate loader to webpack config to parse styles, and insta
 
 ```shell
 npm install css-loader@0.28.5 sass-loader@6.0.6 node-sass@4.5.3 --save-dev
+```
+
+### Template Binding
+
+Will be building a site containing a curation of the latest front end development resources. Eventually app will consume list of articles from a REST service. For now, hard-coded locally.
+
+Start by adding `data` property to [Layout.vue](src/theme/Layout.vue)
+
+Template section of .vue file has access to data from script via *data binding*.
+
+Use `v-for` *directive* to iterate over a list of items:
+
+```html
+<div class="column is-one-third" v-for="(post, title) in posts" v-bind:key="post.id">
+  <h3>{{ post.title }}</h3>
+  {{ post.content }}
+</div>
+```
+
+Can bind `href` attribute to data:
+
+```html
+<a class="card-footer-item" :href="post.link" target="_blank">Read More</a>
 ```

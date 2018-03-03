@@ -14,6 +14,7 @@
     - [Linting](#linting)
   - [Single File Components](#single-file-components)
     - [Vue Component](#vue-component)
+    - [.Vue Files](#vue-files)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -155,17 +156,32 @@ Vue uses single file components, each file contains a template for html, a scrip
 One way to do things is to declare a component using `Vue.component` method.
 
 On first load, client entry will mount view instance to the div with id of `app` and create an `<app></app>` element.
-`<app></app>` element is configured in app.js with a template:
+`<app></app>` element is configured in app.js with a template, so `<app></app>` element will be replaced with app template configuration.
 
-```javascript
-Vue.component('app', {
-  template: `
-    <div id="app">
-    ...
+### .Vue Files
 
-const app = new Vue({
-  render: h => h('app')
-})
+Recommended way of doing things. Example [src/theme/Layout.vue](src/theme/Layout.vue)
+
+`<template>` section contains html of component.
+
+import the .vue file in app.js
+
+Need to add a webpack loader to load .vue files, add a new rule in `module` section of [build/webpack.base.config.js](build/webpack.base.config.js).
+
+A few more dev dependencies needed to make this work:
+
+```shell
+npm install vue-loader@13.0.2 vue-template-compiler@2.4.2 --save-dev
 ```
 
-Therefore `<app></app>` element will be replaced with app template configuration.
+Note that eslint can also lint .vue files so add that to the `test` property of the lint rule.
+
+Now can remove this section from client-entry because vue-loader handles HMR:
+
+```javascript
+if (module.hot) {
+  module.hot.accept()
+}
+```
+
+Loader uses vue template compiler, so can remove `resolve` section from webpack base config that was compiling templates on the fly.

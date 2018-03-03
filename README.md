@@ -19,6 +19,7 @@
     - [Styles](#styles)
     - [Template Binding](#template-binding)
     - [Child Components](#child-components)
+    - [Custom Properties](#custom-properties)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -310,3 +311,20 @@ Then using the custom elements in the template:
 ```
 
 Also pull out all the cards to a Category component.
+
+### Custom Properties
+
+In previous module, we created static child components. Want to create dynamic child components, pass in data to them.
+One way to do this is with *custom properties*. Example [Post.vue](src/theme/Post.vue).
+
+Use `props` property. This is an array that binds the property of the component with attribute of the element.
+
+![bind-props](course-images/bind-props.png)
+
+Move card snippet to Post component. Now it needs data passed in to it. This is done by binding the custom `<app-post>` element with the `post` json data, via `props`:
+
+```html
+<div class="column is-one-third" v-for="(post, title) in posts" v-bind:key="post.id">
+  <app-post :post="post"></app-post>
+</div>
+```

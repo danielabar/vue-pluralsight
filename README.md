@@ -18,6 +18,7 @@
     - [ES6 Transpiling](#es6-transpiling)
     - [Styles](#styles)
     - [Template Binding](#template-binding)
+    - [Child Components](#child-components)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -268,3 +269,44 @@ Can bind `href` attribute to data:
 ```html
 <a class="card-footer-item" :href="post.link" target="_blank">Read More</a>
 ```
+
+### Child Components
+
+Layout.vue is getting too big having all the site's content. Break it up into *child components*.
+
+[AppHeader.vue](src/theme/AppHeader.vue) | [AppFooter.vue](src/theme/AppFooter.vue)
+
+Move header and footer sections of Layout.vue into Header and Footer components respectively.
+
+Then need to include these new components in Layout.vue by importing them and defining them as components:
+
+```javascript
+<script>
+  import AppHeader from './AppHeader.vue'
+  import AppFooter from './AppFooter.vue'
+  export default {
+    components: {
+      'app-header': AppHeader,
+      'app-footer': AppFooter
+    },
+    data () {
+      ...
+    }
+  }
+```
+
+Then using the custom elements in the template:
+
+```html
+<template>
+  <div>
+    <app-header></app-header>
+    <section class="main-section section">
+      ...
+    </section>
+    <app-footer></app-footer>
+  </div>
+</template>
+```
+
+Also pull out all the cards to a Category component.

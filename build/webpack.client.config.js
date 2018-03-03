@@ -1,6 +1,6 @@
 const base = require('./webpack.base.config');
 
-// load base config, then add new empty array of plugins
+// extend base config, including a new `plugins` property, initialized to empty array
 const config = Object.assign({}, base, {
   plugins: base.plugins || []
 });

@@ -103,3 +103,26 @@ Notice output of webpack build, this time bundle is generated at `assets/js/app.
 Now you can change module, for example string in app.js and webpack build will automatically re-run. Still need to refresh browser to see change.
 
 ### Hot Reloading
+
+To start, introduce [build/webpack.client.config](build/webpack.client.config) and require the base config from within the client config. Then modify [build/dev-server.js](build/dev-server.js) to use client config instead of base config.
+
+To make hot reloading work:
+
+1. Extend client config adding a new entry point (dev-server)
+2. Push two more plugins (dev-server)
+3. Accept hot module in [src/client-entry.js](src/client-entry.js)
+4. Add template definition in Vue instantiation [src/app.js](src/app.js) so that Vue can re-render template
+
+Now can make a change to any module, then hot middleware through hot module replacement plugin injects changes, then vue knows how to render it.
+
+### Linting
+
+Will use ESLint. [.eslintrc.js](.eslintrc.js). To install the dev deps:
+
+```shell
+npm install eslint@4.5.0 eslint-loader@1.9.0 eslint-plugin-html@3.2.0 eslint-config-standard@10.2.1 eslint-plugin-promise@3.5.0 eslint-plugin-standard@3.0.1 eslint-plugin-import@2.7.0 eslint-plugin-node@5.1.1 --save-dev
+```
+
+Modify [build/webpack.base.config.js](build/webpack.base.config.js) to hook up linting into build process.
+
+Now when server is restarted, build will fail on lint errors.

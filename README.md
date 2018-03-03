@@ -20,6 +20,7 @@
     - [Template Binding](#template-binding)
     - [Child Components](#child-components)
     - [Custom Properties](#custom-properties)
+    - [Slots](#slots)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -328,3 +329,52 @@ Move card snippet to Post component. Now it needs data passed in to it. This is 
   <app-post :post="post"></app-post>
 </div>
 ```
+
+### Slots
+
+Passing in data via props is good enough for some cases, but may want more control over template of child component. Do this with slots. For example:
+
+Remove post title from Post component and move it to Category component:
+
+```html
+<app-post :post="post">
+  <h3>{{ post.title }}</h3>
+</app-post>
+```
+
+At first, header will disappear from rendered page. Because Vue parsed the h3 title but doesn't know where to add it.
+
+This can be specified with `<slot>` element in the child element `<app-post>`:
+
+```html
+<div class="card-content">
+  <slot></slot>             <--- <h3> element from parent Category component will be "slotted" in here
+  {{ post.content }}
+</div>
+```
+
+But if also want to remove `{{ post.content }}` from Post element, need to bind multiple content areas with multiple slots.
+
+To do this, in the child component, give each slot a name:
+
+```html
+<div class="card-content">
+  <slot name="title"></slot>
+  <slot name="content"></slot>
+</div>
+```
+
+Then reference the content with the slot name in the parent component:
+
+```html
+<div class="column is-one-third" v-for="(post, title) in posts" v-bind:key="post.id">
+  <app-post :post="post">
+    <h3 slot="title">{{ post.title }}</h3>
+    <span slot="content">{{ post.content }}</span>
+  </app-post>
+</div>
+```
+
+Finally, change Post component so only link is a property.
+
+Benefit of using slots is component can be re-used but with different elements. For example, in another view cards could be used with an h2 tag instead of h3 for the title slot.

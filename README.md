@@ -38,6 +38,13 @@
     - [Authentication Call](#authentication-call)
     - [Authentication Status](#authentication-status)
     - [Intercept Requests](#intercept-requests)
+  - [State Management](#state-management)
+    - [Communication Through Events](#communication-through-events)
+    - [Vuex Setup](#vuex-setup)
+    - [Getters](#getters)
+    - [Actions - Mutations](#actions---mutations)
+    - [Triggering Actions](#triggering-actions)
+    - [Modules](#modules)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -776,3 +783,184 @@ For better security, add CSRF token and captcha to discourage bots (not covered 
 ### Intercept Requests
 
 Add `getProfile` method to service layer, and watcher for `isAuthenticated` in Login.vue. When `isAuthenticated` becomes true, run `getProfile` method. However, will get 401 from server because the jwt token was not included as a request header. Add axios request interceptor to always add it.
+
+## State Management
+
+As app grows, sharing state between components doesn't scale. For example, currently Login component knows what the logged in username is, would like to share that with AppHeader. Need to ensure updates propagate to all components that need that data.
+
+### Communication Through Events
+
+First attempt to share state between components (not the best). Eg: when user is logged in, want Header component to show Logout instead of Login. Recall currently only Login component knows about `isAuthenticated` state.
+
+[event-bus.js](src/event-bus.js)
+
+Whenever isAuthenticated changes (recall Login.vue has a watch on it), `eventBus.$emit('authStatusUpdate', val)`.
+
+Then AppHeader can listen for this event and update itself accordingly:
+
+```javascript
+created () {
+  eventBus.$on('authStatusUpdate', isAuthenticated => {this.isAuthenticated = isAuthenticated})
+}
+```
+
+But there's no logic to set isAuthenticated correctly the first time on other views. And this will lead to spaghetti mess of events communication between components.
+
+Need a central source of truth, and to detach state and logic from component, move it to a separate place where all components will look only in that one place for the state. This is *state management*.
+
+### Vuex Setup
+
+Flux-like pattern for Vue.
+
+```shell
+npm install vuex@2.4.0 --save
+```
+
+[vuex/index.js](src/vuex/index.js)
+
+The store is a centralized way to manage state.
+
+Include store in app.js
+
+Vue.js devtools extension in Chrome store - shows state of store in Vue tab in dev tools.
+
+### Getters
+
+In AppHeader, remove old event-bus code and replace with `computed` property. Whenever isAuthenticated is updated in the store, it will update in computed property:
+
+```javascript
+computed: {
+  isAuthenticated() {
+    return this.$store.state.isAuthenticated
+  }
+}
+```
+
+Actually, above is bad, never access state directly. Also, may want to run some logic before reading property.
+
+Use store's `getters`, which work as computed properties.
+
+```javascript
+const store = new Vuex.Store({
+  state,
+  getters: {
+    isAuthenticated: (state) => {
+      return state.isAuthenticated
+    }
+  }
+})
+```
+To use the store's getters in a component, use `import {mapGetters} from 'vuex'`, which maps store getters to local computed properties.
+
+```javascript
+import {mapGetters} from 'vuex'
+export default {
+  computed: {
+    ...mapGetters(['isAuthenticated'])
+  }
+}
+```
+
+### Actions - Mutations
+
+Currently, `isAuthenticated` parameter is first set on page load, in Login.vue `created` method.
+Then on login/logout methods defined in Login.vue, it is set to true/false respectively.
+
+These actions will be moved to the store, starting with logout.
+
+Remove event-bus from Login.vue and import mapgetters.
+
+Store has `actions` property for methods that are called to eventually modify state.
+
+Each action receives the store. `commit` command will trigger a mutation that eventually updates the state. String passed to commit command corresponds to a *mutation*. Mutations receive state as parameter.
+
+```javascript
+const store = new Vuex.Store({
+  state,
+  getters: {
+    isAuthenticated: (state) => {
+      return state.isAuthenticated
+    }
+  },
+  actions: {
+    logout (context) {
+      context.commit('logout')
+    }
+  },
+  mutations: {
+    logout (state) {
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem('token', null)
+        window.localStorage.setItem('tokenExpiration', null)
+      }
+      state.isAuthenticated = false
+    }
+  }
+})
+```
+
+Flow: component => actions => mutations => state
+
+### Triggering Actions
+
+Starting with loading `mapActions` from `vuex`. This maps component methods with the store.dispatch calls.
+
+Connect logout action from store and bind it to custom logout method in Login component.
+
+```javascript
+methods: {
+  ...mapActions({
+    logout: 'logout'
+  })
+  login () {
+  ...
+  }
+}
+```
+
+This means that whenever `logout` is run from component, vuex will trigger `this.$store.dispatch('logout')`, which in turn will trigger `logout` action defined in [store](src/vuex/index.js).
+
+Now move `login` to vuex action. This time want to control what data gets passed in to action so call `$store.dispatch` explicitly rather than using `mapActions` shortcut. Login component:
+
+```javascript
+methods: {
+  ...mapActions({
+    logout: 'logout'
+  }),
+  login () {
+    this.$store.dispatch('login', {username: this.username, password: this.password})
+      .then(() => {
+        this.username = ''
+        this.password = ''
+      })
+  }
+}
+```
+
+Then, create a *mutation* that will trigger after user is logged in.
+
+Finally, want to set isAuthenticated state when page is initially loaded. Renove logic from `created` method of Login component to dom loaded callback at end of store.
+
+### Modules
+
+As application grows, won't scale to have the entire app's, state, getters, actions and mutations all in the single store index.js file. Modules are used to create *segments* within the vuex store.
+
+For example, to connect Posts with store, introduce [vuex/posts.js](src/vuex/posts.js), then import it into store's index.js. Then add it to `modules` reserved property of the store. Note `namespaced: true`
+
+Now modify Category component to use posts getters from store, however, need to include module name, to limit the getters to onlh look in the posts module namespace.
+
+To update categoryId in state from the url params, component calls:
+
+```javascript
+methods: {
+  loadPosts () {
+    let categoryId = 2
+    if (this.$route.params.id === 'mobile') {
+      categoryId = 11
+    }
+    this.$store.dispatch('postsModule/updateCategory', categoryId)
+  }
+}
+```
+
+Now that posts and categoryId is being managed by the store, with a single source of truth in state, could also add a message in header (or a breadcrumb component) displaying the currently selected category id. `...mapGetters('postsModule', ['categoryId'])`

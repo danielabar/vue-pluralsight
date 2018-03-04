@@ -30,6 +30,7 @@
     - [Redirect](#redirect)
     - [Route Parameters](#route-parameters)
     - [Route Query and Name](#route-query-and-name)
+    - [Wildcard Route](#wildcard-route)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -634,3 +635,11 @@ However, now clicking on Mobile link in app, this shows up in url: `http://local
 The json got encoded and placed in url. To fix this, put `:` in front of `to` attribute of `<router-link>`: `<router-link class="nav-item is-tab" :to="{name: 'category', params: {id: 'mobile'}}">Mobile</router-link>`
 
 Now Vue can parse the section rather than adding it as a string to url.
+
+### Wildcard Route
+
+For example, to create 404 page for all paths that aren't explicitly handled, use wildcard route, linking it to any component you wish, in this example, [NotFound](src/theme/NotFound.vue) which simply displays an error message:
+
+```javascript
+{path: '*', component: NotFound}
+```

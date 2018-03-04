@@ -26,6 +26,9 @@
   - [Routing](#routing)
     - [Loading Routes](#loading-routes)
     - [History Mode](#history-mode)
+    - [Router link - Scroll behavior](#router-link---scroll-behavior)
+    - [Redirect](#redirect)
+    - [Route Parameters](#route-parameters)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -568,3 +571,45 @@ To have home route redirect to category, add to router:
 ```javascript
 {path: '/', redirect: '/category/front-end'}
 ```
+
+### Route Parameters
+
+Sample app has multiple categories, for example `front-end`, `mobile`, etc. Use *route parameters* for dynamic routing, i.e. instead of specifying each category:
+
+```javascript
+{path: '/category/front-end', name: 'category', component: Category},
+{path: '/category/mobile', name: 'category', component: Category},
+```
+
+Use `:parameterName` syntax:
+
+```javascript
+{path: '/category/:id', name: 'category', component: Category},
+```
+
+To use this route from a template:
+
+```html
+<router-link class="nav-item is-tab" to="/category/front-end" exact>Front-end</router-link>
+<router-link class="nav-item is-tab" to="/category/mobile" exact>Mobile</router-link>
+```
+
+Now want the Category component to know about `:id` parameter in the route.
+
+In the data function, add an `id` property. Vue exposes router to components via `$router` object:
+
+```javascript
+id: this.$route.params.id
+```
+
+Component can use router object to programmatically navigate to another page `this.$route.push('/')` or determine what parameters are in the current route `this.$route.params`.
+
+Now to make use of route parameter, break up posts into two arrays, for front end and mobile (still hard-coded data for now).
+
+Add `methods` section with function `loadPosts`, which checks the category `id` and sets the `posts` property accordingly.
+
+Then run the loadPosts method whenever component is `created()`
+
+ISSUE: `created()` is only invoked first time component is loaded. Later if the route changes to a different id but same component, `created()` will NOT be run again. Therefore loading data dynamically based on route parameters should not be placed in created method.
+
+Solution for now is to add watcher on `$route` object, which receives current and previous state of object, and re-run `loadPosts` when the watcher is invoked.

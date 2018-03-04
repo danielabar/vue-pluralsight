@@ -31,6 +31,7 @@
     - [Route Parameters](#route-parameters)
     - [Route Query and Name](#route-query-and-name)
     - [Wildcard Route](#wildcard-route)
+    - [Lazy Loading](#lazy-loading)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -643,3 +644,35 @@ For example, to create 404 page for all paths that aren't explicitly handled, us
 ```javascript
 {path: '*', component: NotFound}
 ```
+
+### Lazy Loading
+
+Looking at devtools console, entire app is currently being loaded as monolithic app.js file, which loads ALL components (Login, Category, NotFound, etc). These components will be instantiated when a linked path is loaded.
+
+But don't need to load all components up front all at once. Use *lazy loading* to only load a component when a matching route is visited.
+
+To do this, do not import all components in [router.js](src/router.js), define them as async components:
+
+```javascript
+// Components: do not import right away if want to use lazy loading
+// import Category from './theme/Category.vue'
+// import Login from './theme/Login.vue'
+// import NotFound from './theme/NotFound.vue'
+
+// Define components asynchronously to achieve lazy loading
+const Category = () => System.import('./theme/Category.vue')
+const Login = () => System.import('./theme/Login.vue')
+const NotFound = () => System.import('./theme/NotFound.vue')
+```
+
+Notice webpack output in console after making this change - it generates separate js bundles for each component, separate from app.js:
+
+```shell
+Asset      Size  Chunks                    Chunk Names
+assets/js/app.js    395 kB       0  [emitted]  [big]  app
+assets/js/1.js   9.73 kB       1  [emitted]
+assets/js/2.js   2.58 kB       2  [emitted]
+assets/js/3.js   3.98 kB       3  [emitted]
+```
+
+Useful as application gets larger, to break it up into chunks and only load what's needed when its needed.

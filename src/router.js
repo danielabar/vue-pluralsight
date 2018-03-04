@@ -1,8 +1,15 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+// Components: do not import right away if want to use lazy loading
 import Category from './theme/Category.vue'
 import Login from './theme/Login.vue'
 import NotFound from './theme/NotFound.vue'
+
+// Define components asynchronously to achieve lazy loading
+// const Category = () => System.import('./theme/Category.vue')
+// const Login = () => System.import('./theme/Login.vue')
+// const NotFound = () => System.import('./theme/NotFound.vue')
 
 // connect VueRouter plugin with Vue configuration
 Vue.use(VueRouter)

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Category from './theme/Category.vue'
+import Login from './theme/Login.vue'
 
 // connect VueRouter plugin with Vue configuration
 Vue.use(VueRouter)
@@ -11,7 +12,9 @@ Vue.use(VueRouter)
 // any component referenced in routes must be imported above
 // recall in app.js, Layout component is mapped to the Vue app
 const router = new VueRouter({
+  mode: 'history',
   routes: [
+    {path: '/login', component: Login},
     {path: '/', component: Category}
   ]
 })

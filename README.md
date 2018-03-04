@@ -25,6 +25,7 @@
     - [Extract Styles](#extract-styles)
   - [Routing](#routing)
     - [Loading Routes](#loading-routes)
+    - [History Mode](#history-mode)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -480,3 +481,26 @@ After router is configured to have default path point to Category component, thi
 ```
 
 Every time page is loaded, router will determine current path, load component linked to path and add its template in the `<router-view>` section.
+
+### History Mode
+
+Adding [Login.vue](src/theme/Login.vue) and a router path to load it.
+
+Now can get to login page via [http://localhost:3000/#/login](http://localhost:3000/#/login).
+
+Clicking logo image reloads root path:
+
+```html
+<a href="/">
+  <img src="http://bit.ly/vue-img" alt="Vue SPA" />
+</a>
+```
+
+Which goes to [http://localhost:3000/#/](http://localhost:3000/#/)
+
+All these paths have a hash symbol `#` between domain and path.
+
+Can also manage history with javascript via history api, to push pages into history.
+To enable this, set `mode: history` in router options. Then navigation works without the hash.
+
+Note that clicking the logo reloads the full page. Next will learn how to ensure that only the router-view is reloaded.

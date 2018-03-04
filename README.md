@@ -26,7 +26,6 @@
   - [Routing](#routing)
     - [Loading Routes](#loading-routes)
     - [History Mode](#history-mode)
-    - [Router link - Scroll behavior](#router-link---scroll-behavior)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -550,4 +549,22 @@ scrollBehavior (to, from, savedPosition) {
     }
   }
 }
+```
+
+### Redirect
+
+Would like category component to load with a category path like `http://localhost:3000/category/<category-name>`, and not with root path.
+
+To start, change router path for Category component:
+
+```javascript
+{path: '/category/front-end', component: Category}
+```
+
+Modify index.html, add `/` in front of stylesheet to load assets from root path (also need that for js assets)
+
+To have home route redirect to category, add to router:
+
+```javascript
+{path: '/', redirect: '/category/front-end'}
 ```

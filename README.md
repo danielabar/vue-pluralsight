@@ -32,6 +32,8 @@
     - [Route Query and Name](#route-query-and-name)
     - [Wildcard Route](#wildcard-route)
     - [Lazy Loading](#lazy-loading)
+  - [API Communication](#api-communication)
+    - [Receiving Data](#receiving-data)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -676,3 +678,28 @@ assets/js/3.js   3.98 kB       3  [emitted]
 ```
 
 Useful as application gets larger, to break it up into chunks and only load what's needed when its needed.
+
+## API Communication
+
+### Receiving Data
+
+Will use instructor's REST api hosted on wordpress (CORS enabled?), for example: [https://api.fullstackweekly.com/wp-json/wp/v2/posts?categories=2&per_page=6](https://api.fullstackweekly.com/wp-json/wp/v2/posts?categories=2&per_page=6)
+
+To make xhr requests in client side app, use [axios](https://github.com/axios/axios).
+
+```shell
+npm install axios@0.16.2 --save
+```
+
+For client side organization, create a service layer [app.service.js](src/app.service.js).
+
+Now that `getPosts` method has been defined in service layer to retrieve posts from the REST api, remove the static data from Category component, and use getPosts in loadData.
+
+Then bind json to fields in Category.vue template.
+
+Note Vue automatically sanitizes html. If html is being returned from an api and you want to display as is, use v-html directive instead of curly braces (TRUST ISSUE!):
+
+```html
+<h3 slot="title" v-html="post.title.rendered"></h3>
+<span slot="content" v-html="post.excerpt.rendered"></span>
+```

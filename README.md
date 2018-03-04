@@ -34,6 +34,10 @@
     - [Lazy Loading](#lazy-loading)
   - [API Communication](#api-communication)
     - [Receiving Data](#receiving-data)
+    - [JWT](#jwt)
+    - [Authentication Call](#authentication-call)
+    - [Authentication Status](#authentication-status)
+    - [Intercept Requests](#intercept-requests)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -703,3 +707,72 @@ Note Vue automatically sanitizes html. If html is being returned from an api and
 <h3 slot="title" v-html="post.title.rendered"></h3>
 <span slot="content" v-html="post.excerpt.rendered"></span>
 ```
+
+### JWT
+
+Will add login feature so (authenticated) users can post data to the server. Will use JWT (json web token).
+
+User sends username and password to server, which if valid, responds with tokenExpiration and a token.
+
+User then sends this token along with every subsequent request.
+
+Server generates token with a secret key. i.e. user an only read data sent, but cannot create own token or edit it because doesn't know the secret key.
+
+Add login method to service layer than will resolve or reject.
+
+### Authentication Call
+
+In script of Login component, import appService.
+
+Bind data to template using `v-model` directive, so that every time input values change (from user typing in form), the corresponding parameters in the Vue data will be updated.
+
+```javascript
+import appService from '../app-service.js'
+export default {
+  data() {
+    return {
+      username: '',
+      password: ''
+    }
+  }
+}
+```
+
+```html
+<input v-model="username" class="input" type="text" placeholder="Your username">
+<input v-model="password" class="input" type="password" placeholder="Your password">
+```
+
+When user clicks login button, run the component's login method, using `v-on:` directive and the `click` parameter:
+
+```html
+<button v-on:click="login" class="button is-primary">Login</button>
+```
+
+```javascript
+methods: {
+  login () {
+    appService.login({username: this.username, password: this.password})
+      .then((data) => {
+        window.localStorage.setItem('token', data.token)
+        window.localStorage.setItem('tokenExpiration', data.expiration)
+      })
+      .catch(() => window.alert('Could not login!'))
+  }
+}
+```
+
+Test with `bill/vuejs`
+
+### Authentication Status
+
+Add another property to data section of Login `isAuthenticated`. Populate it in `created` method, setting to true if expiration token exists in local storage and its in the future relative to current date.
+
+Then in template, use `v-if` directive to only display a welcome message if user is authenticated.
+
+For better security, add CSRF token and captcha to discourage bots (not covered in this course).
+
+
+### Intercept Requests
+
+Add `getProfile` method to service layer, and watcher for `isAuthenticated` in Login.vue. When `isAuthenticated` becomes true, run `getProfile` method. However, will get 401 from server because the jwt token was not included as a request header. Add axios request interceptor to always add it.

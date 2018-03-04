@@ -26,6 +26,7 @@
   - [Routing](#routing)
     - [Loading Routes](#loading-routes)
     - [History Mode](#history-mode)
+    - [Router link - Scroll behavior](#router-link---scroll-behavior)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -504,3 +505,49 @@ Can also manage history with javascript via history api, to push pages into hist
 To enable this, set `mode: history` in router options. Then navigation works without the hash.
 
 Note that clicking the logo reloads the full page. Next will learn how to ensure that only the router-view is reloaded.
+
+### Router link - Scroll behavior
+
+When loading a new page, should only load component that is linked to the matching path in the router view area.
+
+Use `<router-link>` reserved element, instead of `<a>`.
+Instead of `href` attribute, use `to` attribute.
+
+```html
+<router-link to="/"><img src="http://bit.ly/vue-img" alt="Vue SPA" /></router-link>
+```
+
+Whenever a link is selected, router adds a css class `router-link-exact-active`. But in Bulma UI library, active link is set with `is-active` class. Can configure this class as part of Vue router options.
+
+This works for styling Login link. But home link always seems to have `is-active` even if it is not.
+This is because active class matching is *inclusive*. Looks for link that starts with `to` attribute value.
+
+![active-class-matching](course-images/active-class-matching.png "active-class-matching")
+
+It works this way because if there's children such as `/category` and `/category/front-end`, it always has parent selected as well.
+
+But this is an issue for home route path. To fix this, add `exact` attribute to home `<router-link>` element.
+
+`scrollBehavior` is a property of router, a method that accepts path navigating to, path coming from, and scroll position that page was in. Can set for example, y to 0, to make every page navigation scroll to top.
+
+Can also return last saved scroll position to maintain uses position across transitions:
+
+```javascript
+scrollBehavior (to, from, savedPosition) {
+  if (savedPosition) {
+    return savedPosition
+  }
+}
+```
+
+If link has hash parameter, can return hash selector to scroll to the element with id of hash value:
+
+```javascript
+scrollBehavior (to, from, savedPosition) {
+  if (to.hash) {
+    return {
+      selector: to.hash
+    }
+  }
+}
+```

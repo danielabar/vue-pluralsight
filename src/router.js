@@ -12,7 +12,12 @@ Vue.use(VueRouter)
 // any component referenced in routes must be imported above
 // recall in app.js, Layout component is mapped to the Vue app
 const router = new VueRouter({
+  // navigation without the hash
   mode: 'history',
+  // customize router navigation active class
+  linkActiveClass: 'is-active',
+  // make each navigation scroll to top
+  scrollBehavior: (to, from, savedPosition) => ({Y: 0}),
   routes: [
     {path: '/login', component: Login},
     {path: '/', component: Category}

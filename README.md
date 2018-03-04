@@ -29,6 +29,7 @@
     - [Router link - Scroll behavior](#router-link---scroll-behavior)
     - [Redirect](#redirect)
     - [Route Parameters](#route-parameters)
+    - [Route Query and Name](#route-query-and-name)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -613,3 +614,23 @@ Then run the loadPosts method whenever component is `created()`
 ISSUE: `created()` is only invoked first time component is loaded. Later if the route changes to a different id but same component, `created()` will NOT be run again. Therefore loading data dynamically based on route parameters should not be placed in created method.
 
 Solution for now is to add watcher on `$route` object, which receives current and previous state of object, and re-run `loadPosts` when the watcher is invoked.
+
+### Route Query and Name
+
+Also want access to query parameters, for example `http://localhost:3000?sortBy=name&page=1&order=asc`.
+
+For example, to introduce pagination on Category component, navigate to `http://localhost:3000/category/front-end?page=1`.
+
+Then can access it in the Component script with `this.$route.query.page`.
+
+However, need to remove `exact` attribute from `<router-link>` element in AppHeader.vue because want the links to show as active even when there are query parameters.
+
+To organize routes and have semantic access, use `name` parameter in router configuration, for example: `{path: '/category/:id', name: 'category', component: Category},`
+
+Now, instead of hard-coding path in `<router-link>` elements in AppHeader.vue, can reference them by name, and pass in parameters as a json object: `<router-link class="nav-item is-tab" to="{name: 'category', params: {id: 'mobile'}}">Mobile</router-link>`
+
+However, now clicking on Mobile link in app, this shows up in url: `http://localhost:3000/category/%7Bname:%20'category',%20params:%20%7Bid:%20'mobile'%7D%7D`
+
+The json got encoded and placed in url. To fix this, put `:` in front of `to` attribute of `<router-link>`: `<router-link class="nav-item is-tab" :to="{name: 'category', params: {id: 'mobile'}}">Mobile</router-link>`
+
+Now Vue can parse the section rather than adding it as a string to url.

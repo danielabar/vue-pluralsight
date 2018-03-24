@@ -964,3 +964,37 @@ methods: {
 ```
 
 Now that posts and categoryId is being managed by the store, with a single source of truth in state, could also add a message in header (or a breadcrumb component) displaying the currently selected category id. `...mapGetters('postsModule', ['categoryId'])`
+
+## Server-side Rendering
+
+### Server-side vs. Client-side
+
+Client-side is easy - just upload js bundle, css and index.html to a web server.
+Server-side is more complex - need node script to generate end result and run node server side.
+
+Client-side has SEO issues - search bot only sees "view source" of page which will be empty for SPA. Some bots will run the js synchronously but will not wait for ajax to load.
+Servers-side is SEO friendly because page returned from server has all content already rendered.
+
+Client-side - page is progressively rendered, as various ajax requests return, different components will start loading. May be good in some cases. With slower connections, at least user sees something.
+Server-side - user will see white screen until the whole page is ready to be served.
+
+Client-side - multiple network requests to load various portions of the page.
+Server-side - fewer network requests.
+
+Client-side - less constraints.
+Server-side - more constraints, server must run node js and some libraries need special treatment to run in server rendered app. Have to be aware that there is no `window` object.
+
+Client-side - smaller HTML file.
+Server side - larger HTML file, first state snapshot.
+
+### Server-entry
+
+App so far (client-side rendered):
+
+![app-flow](course-images/app-flow.png "app-flow")
+
+`app.js` bundle is loaded via script tag in index.html. Bundle looks for div with app id and generate all markup needed.
+
+To have server generate final result embedded in div, will need a server entry:
+
+![server-entry](course-images/server-entry.png "server-entry")

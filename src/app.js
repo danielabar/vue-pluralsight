@@ -12,8 +12,5 @@ const app = new Vue({
   store
 })
 
-// temp experiment
-window.mytest = app
-
 // export router as well because it may be needed by client entry later
 export { app, router, store }

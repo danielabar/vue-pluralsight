@@ -998,3 +998,76 @@ App so far (client-side rendered):
 To have server generate final result embedded in div, will need a server entry:
 
 ![server-entry](course-images/server-entry.png "server-entry")
+
+Webpack will build server bundle, when user requests page, bundle renderer will render end result embedded in app div and serve full page.
+
+Start by creating [server-entry.js](src/server-entry.js)
+
+Also need a webpack server config [webpack.server.config.js](build/webpack.server.config.js)
+
+### Dev Server Bundle Callback
+
+Include server config in build/dev-server.js
+
+### Bundle Renderer
+
+Install following module created by Vue team that contains `createBundleRenderer` method. It receives server bundle, which is the vue js app, and generates a renderer. Renderer receives current url that user is at and generates final HTML.
+
+```shell
+npm install vue-server-renderer@2.4.2 --save
+```
+
+To actually use server side rendered html, replace div with id of `app` in index.html with `{{ APP }}`
+
+Then modify Layout.vue outer div to have id of `app`.
+
+Then modify server.js to replace APP token with generated html:
+
+```javascript
+html = indexHTML.replace('{{ APP }}', html)
+```
+
+On first attempt, app shell renders but not content. When html rendered from server, various Vue callbacks like `created` are not triggered. These are only triggered after component is attached to document.
+
+App header and footer do not render any content asynchronously so they appear immediately with SSR (server side rendering).
+
+This will be resolved in next section.
+
+### Routes
+
+Include some additional logic in [server-entry.js](src/server-entry.js) to append initial state of application - i.e. a snapshot of the application.
+
+Start by modifying server-entry.js to import `router` and `store` from app module. This way server will have access to current url in router.
+
+Recall that when running in server context, do not have access to document or page.
+
+### Initial State
+
+Add `asyncData` function to all components that fetch data asynchronously. This function is invoked by server-entry.js:
+
+```javascript
+if (component.asyncData) {
+  return component.asyncData(store, router.currentRoute)
+}
+```
+
+Now notice viewing source, can see entire content in the DOM, as seen by search bot - SEO friendly!
+
+However, there are several errors in dev console including `client-side rendered virtual DOM tree is not matching server-rendered content.` This happens because client and server state are mismatched.
+
+Need to stamp initial state on client. Include another placeholder in index.html `{{ STATE }}`. And replace it in server.js with a script tag that creates a global variable `__INITIAL_STATE__` and maps it to the context state.
+
+serialize-javascript module is used to serialize the state.
+
+Use `inBrowser` const in posts.js to check if its in browser or not:
+
+```javascript
+const defaultState = {
+  posts: [],
+  categoryId: 0
+}
+
+// server side rendering
+const inBrowser = typeof window !== 'undefined'
+const state = (inBrowser && window.__INITIAL_STATE__) ? window.__INITIAL_STATE__.postsModule : defaultState
+```

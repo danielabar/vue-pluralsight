@@ -45,6 +45,16 @@
     - [Actions - Mutations](#actions---mutations)
     - [Triggering Actions](#triggering-actions)
     - [Modules](#modules)
+  - [Server-side Rendering](#server-side-rendering)
+    - [Server-side vs. Client-side](#server-side-vs-client-side)
+    - [Server-entry](#server-entry)
+    - [Dev Server Bundle Callback](#dev-server-bundle-callback)
+    - [Bundle Renderer](#bundle-renderer)
+    - [Routes](#routes)
+    - [Initial State](#initial-state)
+  - [Testing](#testing)
+    - [Testing Options](#testing-options)
+    - [Testing Setup](#testing-setup)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1071,3 +1081,31 @@ const defaultState = {
 const inBrowser = typeof window !== 'undefined'
 const state = (inBrowser && window.__INITIAL_STATE__) ? window.__INITIAL_STATE__.postsModule : defaultState
 ```
+
+## Testing
+
+Will only be covering unit testing, not integration or UI testing.
+
+Vue.js - can use any test runner, framework, assertion library or helper library you want. But recommend Karma test runner to launch browser(s), run test in browser and close browser when done.
+
+### Testing Options
+
+For this course, will use Mocha test framework, Chai assertion library and Sinon for mocks.
+
+Could also use Jasmine or Jest, which are testing libraries that contain a framework, and assertions/spies/mocks out of the box.
+
+Another option is AVA, which runs tests concurrently, simple syntax, comes with its own assertion methods.
+
+### Testing Setup
+
+Install deps:
+
+```shell
+npm install --save-dev chai@4.1.2 cross-env@5.0.5 karma@1.7.1 mocha@3.5.3 karma-mocha@1.3.0 karma-phantomjs-launcher@1.0.4 karma-webpack@2.0.4 karma-sinon-chai@1.3.2 sinon@4.0.0 sinon-chai@2.14.0
+```
+
+Create a `test` folder at same level as `src`. Place [karma.config.js](test/unit/karma.config.js) in `test/unit`.
+
+Also create [webpack.test.config.js](build/webpack.test.config.js).
+
+[index.js](test/unit/index.js) contains all files that would like to test.

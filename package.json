@@ -4,7 +4,7 @@
   "description": "> Notes from Pluralsight [course](https://app.pluralsight.com/library/courses/vue-js-single-page-applications/table-of-contents)",
   "scripts": {
     "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start test/unit/karma.config.js --single-run"
   },
   "keywords": [],
   "author": "",

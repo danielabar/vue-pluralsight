@@ -55,6 +55,9 @@
   - [Testing](#testing)
     - [Testing Options](#testing-options)
     - [Testing Setup](#testing-setup)
+    - [Testing Component](#testing-component)
+    - [Testing Component Changes](#testing-component-changes)
+    - [Testing with Router and State](#testing-with-router-and-state)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1109,3 +1112,34 @@ Create a `test` folder at same level as `src`. Place [karma.config.js](test/unit
 Also create [webpack.test.config.js](build/webpack.test.config.js).
 
 [index.js](test/unit/index.js) contains all files that would like to test.
+
+Add extra lint rules for tests (describe, it, expect) [.eslintrc](test/unit/.eslintrc)
+### Testing Component
+
+[Post.spec.js](test/unit/specs/Post.spec.js)
+
+`Post` component has a `link` property and displays the title section in the title slot and content section in content slot.
+
+Test will verify that link is generated correctly.
+
+To run tests, add to `package.json`:
+
+```
+"test": "karma start test/unit/karma.config.js --single-run"
+```
+
+Then run at console:
+
+```shell
+npm test
+```
+
+### Testing Component Changes
+
+Also need to test that when properties of a component change, it re-renders with appropriate changes.
+
+To make property change take effect in test, use [nextTick](https://vuejs.org/v2/api/#Vue-nextTick). This method triggers callback after DOM update cycle is finished. Use Mocha's `done` callback to wait.
+
+### Testing with Router and State
+
+[Category.spec.js](test/unit/specs/Category.spec.js)
